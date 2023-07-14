@@ -15,6 +15,8 @@
 
     <dependencies>
 
+        <!-- Реализация тестовой среды, которая необходима только во время выполнения -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -22,12 +24,16 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Поддержка для параметризованных тестов в JUnit -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Добавление Mockito  -->
 
         <dependency>
             <groupId>org.mockito</groupId>
@@ -43,13 +49,35 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Подключение логгера log4j -->
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
     </dependencies>
 
 
 
     <build>
         <plugins>
-            <!--errrrrrrrrrrrrrrrrrrrrrrrrrrr -->
+
+            <!-- Плагин для запуска тестов -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
