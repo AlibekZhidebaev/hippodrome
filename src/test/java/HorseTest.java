@@ -3,11 +3,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -16,46 +16,46 @@ class HorseTest {
 
     // -- Тесты конструкторов --
     @Test
-     protected void testConstructorAndMethods1() {
+     protected void testConstructorCallExceptionTypeForFirstParameter() {
          assertThrows(IllegalArgumentException.class, () -> new Horse(null, 0, 0)); }
     @Test
-    protected void testConstructorAndMethods() {
+    protected void testConstructorExceptionReportingNullForFirstParameter() {
           Throwable exception = assertThrows(IllegalArgumentException.class, () ->
                 new Horse(null, 0, 0));
             assertEquals("Name cannot be null.", exception.getMessage());
     }
      @ParameterizedTest
      @ValueSource(strings = {"", " ", "\t", "\n"})
-     protected void testConstructorWithEmptyOrWhitespaceParameter(String parameter) {
-         assertThrows(IllegalArgumentException.class, () -> new Horse(parameter, 0, 0));
+     protected void testConstructorWithEmptyOrWhitespaceForFirstParameter(String horseName) {
+         assertThrows(IllegalArgumentException.class, () -> new Horse(horseName, 0, 0));
      }
      @ParameterizedTest
      @ValueSource(strings = {"", " ", "\t", "\n"})
-     protected void testConstructorWithEmptyOrWhitespaceParameter2(String parameter) {
+     protected void testConstructorExceptionReportingCannotBlankForFirstParameter(String horseName) {
          Throwable exception = assertThrows(IllegalArgumentException.class, () ->
-               new Horse(parameter, 0, 0));
+               new Horse(horseName, 0, 0));
          assertEquals("Name cannot be blank.", exception.getMessage());
      }
      @Test
-     protected void testConstructorWithNegativeNumberParameter() {
-         assertThrows(IllegalArgumentException.class, () -> new Horse("name", -1, 0));
+     protected void testConstructorCallExceptionTypeForSecondParameter() {
+         assertThrows(IllegalArgumentException.class, () -> new Horse("horseName", -1, 0));
      }
      @Test
-     protected void testConstructorWithNegativeNumberParameter2() {
+     protected void testConstructorExceptionReportingNegativeNumberForSecondParameter() {
          Throwable exception = assertThrows(IllegalArgumentException.class, () ->
-                 new Horse("name", -1, 0));
+                 new Horse("horseName", -1, 0));
          assertEquals("Speed cannot be negative.", exception.getMessage());
      }
 
     // -- Тесты методов --
      @Test
-     protected void testConstructorWithNegativeNumberParameter3() {
-         assertThrows(IllegalArgumentException.class, () -> new Horse("name", 0, -1));
+     protected void testConstructorCallExceptionTypeForThirdParameter() {
+         assertThrows(IllegalArgumentException.class, () -> new Horse("horseName", 0, -1));
      }
      @Test
-     protected void testConstructorWithNegativeNumberParameter4() {
+     protected void testConstructorExceptionReportingNegativeNumberForThirdParameter() {
          Throwable exception = assertThrows(IllegalArgumentException.class, () ->
-                 new Horse("name", 0, -1));
+                 new Horse("horseName", 0, -1));
          assertEquals("Distance cannot be negative.", exception.getMessage());
      }
 
@@ -63,36 +63,40 @@ class HorseTest {
 
      @Test
      public void testGetName() {
-         assertEquals("MyHorse", new Horse("MyHorse", 0, 0).getName());
+         assertEquals("horseName", new Horse("horseName", 0, 0).getName());
      }
      @Test
      public void testGetSpeed() {
-         assertEquals(1, new Horse("name", 1, 0).getSpeed());
+         assertEquals(10, new Horse("horseName", 10, 0).getSpeed());
      }
      @Test
-     public void testGetDistance() {
-         assertEquals(10, new Horse("name", 0, 10).getDistance());
-     }
-
-     // -- Mock Test --
-     @Test
-     public void testMove() {
-         try (MockedStatic<Horse> mockedStatic = mockStatic(Horse.class)) {
-             new Horse("horseName", 0, 0).move();
-             mockedStatic.verify(() -> Horse.getRandomDouble(0.2, 0.9));
-         }
+     public void testGetDistanceParameter() {
+         assertEquals(10, new Horse("horseName", 0, 10).getDistance());
      }
     @Test
-    public void testGetDistance3() {
-        mockStatic(Horse.class);
-        double speed = 10;
-        double startDistance = 100;
-        double expectedRandomValue = 0.5;
-        when(Horse.getRandomDouble(0.2, 0.9)).thenReturn(expectedRandomValue);
-        double endDistance = startDistance + speed * expectedRandomValue;
-        Horse horse = new Horse("horseName",speed,startDistance);
-        horse.move();
-        assertEquals(endDistance, horse.getDistance());
+    public void testGetDistanceZeroForNoParameter() {
+        assertEquals(0, new Horse("horseName", 0).getDistance());
     }
+
+    // -- Mock Test --
+
+     @Test
+     public void testMoveVerifyCallGetRandomDoubleMethodAndCheckExpressionValues() {
+         try (MockedStatic<Horse> horseMock = Mockito.mockStatic(Horse.class)) {
+             double speed = 10;
+             double startDistance = 100;
+             double expectedRandomValue = 0.5;
+             Horse horse = new Horse("horseName", speed, startDistance);
+             // -- Установка желаемого значения (expectedRandomValue = 0.5) при вызове метода getRandomDouble --
+             when(Horse.getRandomDouble(0.2, 0.9)).thenReturn(expectedRandomValue);
+             horse.move();
+             // -- Проверка вызова статического метода getRandomDouble --
+             horseMock.verify(() -> Horse.getRandomDouble(0.2, 0.9));
+             double endDistance = startDistance + speed * expectedRandomValue;
+             // -- Проверка корректности вычисления выражения --
+             assertEquals(endDistance, horse.getDistance());
+         }
+     }
+
 }
 
