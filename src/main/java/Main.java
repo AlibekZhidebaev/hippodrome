@@ -21,7 +21,7 @@ public class Main {
         // -- Добавление info в лог файл --
         logger.info("Начало скачек. Количество участников: " + hippodrome.getHorses().size());
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 100; i++) {
             hippodrome.move();
             watch(hippodrome);
             TimeUnit.MILLISECONDS.sleep(200);
